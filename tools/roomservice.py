@@ -51,7 +51,7 @@ except:
     device = product
 
 if not depsonly:
-    print("Device %s not found. Attempting to retrieve device repository from CyanogenMod Github (http://github.com/CyanogenMod)." % device)
+    print("Device \"%s\" not found. Attempting to retrieve device repository from Android Open Pwn Project's Github (http://github.com/aopp)..." % device)
 
 repositories = []
 
@@ -70,7 +70,7 @@ def add_auth(githubreq):
         githubreq.add_header("Authorization","Basic %s" % githubauth)
 
 if not depsonly:
-    githubreq = urllib.request.Request("https://api.github.com/search/repositories?q=%s+user:CyanogenMod+in:name+fork:true" % device)
+    githubreq = urllib.request.Request("https://api.github.com/search/repositories?q=%s+user:aopp+in:name+fork:true" % device)
     add_auth(githubreq)
     try:
         result = json.loads(urllib.request.urlopen(githubreq).read().decode())
@@ -110,7 +110,7 @@ def indent(elem, level=0):
 
 def get_default_revision():
     m = ElementTree.parse(".repo/manifest.xml")
-    d = m.findall('default')[0]
+    d = m.findall('remote')[1]
     r = d.get('revision')
     return r.replace('refs/heads/', '').replace('refs/tags/', '')
 
@@ -173,12 +173,12 @@ def add_to_manifest(repositories, fallback_branch = None):
         repo_name = repository['repository']
         repo_target = repository['target_path']
         if exists_in_tree(lm, repo_name):
-            print('CyanogenMod/%s already exists' % (repo_name))
+            print('aopp/%s already exists' % (repo_name))
             continue
 
-        print('Adding dependency: CyanogenMod/%s -> %s' % (repo_name, repo_target))
+        print('Adding dependency: aopp/%s -> %s' % (repo_name, repo_target))
         project = ElementTree.Element("project", attrib = { "path": repo_target,
-            "remote": "github", "name": "CyanogenMod/%s" % repo_name })
+            "remote": "aopp", "name": "aopp/%s" % repo_name })
 
         if 'branch' in repository:
             project.set('revision',repository['branch'])
@@ -199,7 +199,7 @@ def add_to_manifest(repositories, fallback_branch = None):
     f.close()
 
 def fetch_dependencies(repo_path, fallback_branch = None):
-    print('Looking for dependencies')
+    print('Looking for dependencies...')
     dependencies_path = repo_path + '/cm.dependencies'
     syncable_repos = []
 
@@ -209,7 +209,7 @@ def fetch_dependencies(repo_path, fallback_branch = None):
         fetch_list = []
 
         for dependency in dependencies:
-            if not is_in_manifest("CyanogenMod/%s" % dependency['repository']):
+            if not is_in_manifest("aopp/%s" % dependency['repository']):
                 fetch_list.append(dependency)
                 syncable_repos.append(dependency['target_path'])
 
@@ -222,7 +222,7 @@ def fetch_dependencies(repo_path, fallback_branch = None):
         print('Dependencies file not found, bailing out.')
 
     if len(syncable_repos) > 0:
-        print('Syncing dependencies')
+        print('Syncing dependencies...')
         os.system('repo sync --force-sync %s' % ' '.join(syncable_repos))
 
     for deprepo in syncable_repos:
@@ -284,7 +284,7 @@ else:
 
             add_to_manifest([adding], fallback_branch)
 
-            print("Syncing repository to retrieve project.")
+            print("Syncing repository to retrieve project...")
             os.system('repo sync --force-sync %s' % repo_path)
             print("Repository synced!")
 
@@ -292,4 +292,4 @@ else:
             print("Done")
             sys.exit()
 
-print("Repository for %s not found in the CyanogenMod Github repository list. If this is in error, you may need to manually add it to your local_manifests/roomservice.xml." % device)
+print("Repository for \"%s\" not found in the Android Open Pwn Project Github repository list. If this is an error, you may need to manually add it to your local_manifests/roomservice.xml." % device)
