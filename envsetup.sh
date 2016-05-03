@@ -19,6 +19,9 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
 - ggrep:   Greps on all local Gradle files.
 - jgrep:   Greps on all local Java files.
 - resgrep: Greps on all local res/*.xml files.
+- mangrep: Greps on all local AndroidManifest.xml files.
+- mgrep:   Greps on all local Makefiles files.
+- sepgrep: Greps on all local sepolicy files.
 - sgrep:   Greps on all local source files.
 - godir:   Go to the directory containing a file.
 - cmremote: Add git remote for CM Gerrit Review
@@ -76,8 +79,8 @@ function check_product()
         return
     fi
 
-    if (echo -n $1 | grep -q -e "^cm_") ; then
-       CM_BUILD=$(echo -n $1 | sed -e 's/^cm_//g')
+    if (echo -n $1 | grep -q -e "^aopp_") ; then
+       CM_BUILD=$(echo -n $1 | sed -e 's/^aopp_//g')
        export BUILD_NUMBER=$((date +%s%N ; echo $CM_BUILD; hostname) | openssl sha1 | sed -e 's/.*=//g; s/ //g' | cut -c1-10)
     else
        CM_BUILD=
@@ -503,9 +506,11 @@ function print_lunch_menu()
     fi
     echo
     if [ "z${CM_DEVICES_ONLY}" != "z" ]; then
-       echo "Breakfast menu... pick a combo:"
+       echo "Breakfast and brunch menu... pick a combo:"
+       echo ""
     else
        echo "Lunch menu... pick a combo:"
+       echo ""
     fi
 
     local i=1
@@ -517,7 +522,7 @@ function print_lunch_menu()
     done | column
 
     if [ "z${CM_DEVICES_ONLY}" != "z" ]; then
-       echo "... and don't forget the bacon!"
+       echo " ...don't forget the bacon!"
     fi
 
     echo
@@ -541,7 +546,7 @@ function breakfast()
     local variant=$2
     CM_DEVICES_ONLY="true"
     unset LUNCH_MENU_CHOICES
-    add_lunch_combo full-eng
+    #add_lunch_combo full-eng
     for f in `/bin/ls vendor/cm/vendorsetup.sh 2> /dev/null`
         do
             echo "including $f"
@@ -562,7 +567,7 @@ function breakfast()
             if [ -z "$variant" ]; then
                 variant="userdebug"
             fi
-            lunch cm_$target-$variant
+            lunch aopp_$target-$variant
         fi
     fi
     return $?
@@ -725,7 +730,7 @@ function eat()
 {
     if [ "$OUT" ] ; then
         MODVERSION=$(get_build_var CM_VERSION)
-        ZIPFILE=cm-$MODVERSION.zip
+        ZIPFILE=aopp-$MODVERSION.zip
         ZIPPATH=$OUT/$ZIPFILE
         if [ ! -f $ZIPPATH ] ; then
             echo "Nothing to eat"
