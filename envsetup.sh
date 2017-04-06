@@ -18,6 +18,9 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
 - mangrep:   Greps on all local AndroidManifest.xml files.
 - mgrep:     Greps on all local Makefiles files.
 - sepgrep:   Greps on all local sepolicy files.
+- mangrep:   Greps on all local AndroidManifest.xml files.
+- mgrep:     Greps on all local Makefiles files.
+- sepgrep:   Greps on all local sepolicy files.
 - sgrep:     Greps on all local source files.
 - godir:     Go to the directory containing a file.
 
@@ -132,8 +135,8 @@ function check_product()
         return
     fi
 
-    if (echo -n $1 | grep -q -e "^lineage_") ; then
-        CM_BUILD=$(echo -n $1 | sed -e 's/^lineage_//g')
+    if (echo -n $1 | grep -q -e "^aopp_") ; then
+        CM_BUILD=$(echo -n $1 | sed -e 's/^aopp_//g')
         export BUILD_NUMBER=$( (date +%s%N ; echo $CM_BUILD; hostname) | openssl sha1 | sed -e 's/.*=//g; s/ //g' | cut -c1-10 )
     elif (echo -n $1 | grep -q -e "^cm_") ; then
         # Fall back to cm_<product>
@@ -550,9 +553,11 @@ function print_lunch_menu()
     echo "You're building on" $uname
     echo
     if [ "z${CM_DEVICES_ONLY}" != "z" ]; then
-       echo "Breakfast menu... pick a combo:"
+       echo "Breakfast and brunch menu... pick a combo:"
+       echo ""
     else
        echo "Lunch menu... pick a combo:"
+       echo ""
     fi
 
     local i=1
@@ -564,7 +569,7 @@ function print_lunch_menu()
     done | column
 
     if [ "z${CM_DEVICES_ONLY}" != "z" ]; then
-       echo "... and don't forget the bacon!"
+       echo " ... and don't forget the bacon!"
     fi
 
     echo
