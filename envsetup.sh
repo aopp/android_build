@@ -15,9 +15,9 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
 - ggrep:     Greps on all local Gradle files.
 - jgrep:     Greps on all local Java files.
 - resgrep:   Greps on all local res/*.xml files.
-- mangrep: Greps on all local AndroidManifest.xml files.
-- mgrep:   Greps on all local Makefiles files.
-- sepgrep: Greps on all local sepolicy files.
+- mangrep:   Greps on all local AndroidManifest.xml files.
+- mgrep:     Greps on all local Makefiles files.
+- sepgrep:   Greps on all local sepolicy files.
 - mangrep:   Greps on all local AndroidManifest.xml files.
 - mgrep:     Greps on all local Makefiles files.
 - sepgrep:   Greps on all local sepolicy files.
